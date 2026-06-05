@@ -276,28 +276,41 @@ body {
     width: 100%; border: none;
     display: block; overflow: visible; height: auto;
   }
-  /* Content padding replaces @page margins (since margin:0 removes browser header/footer) */
+  /* Content padding replaces @page margins */
   #resume-panel .panel-body {
     overflow: visible;
-    padding: 0.55in 0.7in 0.55in 0.7in;
+    padding: 0.42in 0.65in 0.42in 0.65in;
   }
+  /* Shrink font for print so everything fits on one page */
+  #resume-editor {
+    font-size: 11.8px !important;
+    line-height: 1.42 !important;
+  }
+  #resume-editor .r-name { font-size: 20px !important; }
+  #resume-editor .r-contact { font-size: 11px !important; }
+  #resume-editor .r-section-title { font-size: 10px !important; }
+  #resume-editor .r-job-title { font-size: 12.5px !important; }
+  #resume-editor .r-job-dates { font-size: 11px !important; }
+  #resume-editor .r-job-company { font-size: 11px !important; margin-bottom: 2px !important; }
+  #resume-editor .r-bullets li { font-size: 11.8px !important; }
   /* Clean up interactive styles */
   #resume-editor [contenteditable]:hover,
   #resume-editor [contenteditable]:focus { background: none !important; outline: none !important; }
   #resume-editor [contenteditable] { cursor: default; }
   /* Keep section titles in a print-safe accent (dark indigo) */
-  .r-divider { border-top-color: #3730a3; }
+  .r-divider { border-top-color: #3730a3; margin: 7px 0 !important; }
   .r-section-title { color: #3730a3 !important; }
-  /* Education notes — keep as subtle italic, not a bright link color */
+  /* Education notes */
   .r-edu-note { color: #4b5563 !important; }
-  /* Prevent orphaned headings — keep title with its content */
+  /* Prevent orphaned headings */
   .r-section-title { break-after: avoid; page-break-after: avoid; }
-  /* Prevent job entries from splitting mid-bullet */
+  /* Prevent job entries splitting mid-bullet */
   .r-job { break-inside: avoid; page-break-inside: avoid; }
-  /* Tighter spacing for print */
-  .r-job { margin-bottom: 9px; }
-  .r-section-title { margin-top: 11px; margin-bottom: 5px; }
-  .r-bullets li { margin-bottom: 2px; }
+  /* Tight print spacing */
+  .r-job { margin-bottom: 7px !important; }
+  .r-section-title { margin-top: 9px !important; margin-bottom: 4px !important; }
+  .r-bullets { margin-top: 3px !important; }
+  .r-bullets li { margin-bottom: 1.5px !important; }
   #cover-letter-print { display: block !important; }
 }
 
