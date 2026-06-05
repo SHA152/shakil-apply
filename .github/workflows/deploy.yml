@@ -1,0 +1,36 @@
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-worker:
+    name: Deploy Worker (API proxy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          # ANTHROPIC_API_KEY is already stored as a Worker Secret in Cloudflare.
+          # You only need to re-set it if you want to rotate the key.
+          # To set it the first time, run locally: wrangler secret put ANTHROPIC_API_KEY
+
+  deploy-app:
+    name: Deploy App (Tailoring Studio HTML)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: shakil-apply        # must match your Pages project name in Cloudflare
+          directory: .                      # deploys index.html from repo root
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
