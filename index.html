@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tailoring Studio — shakil.fun/apply</title>
+<style>
+:root {
+  --brand: #1a1a2e;
+  --accent: #4f46e5;
+  --accent-light: #e0e7ff;
+  --accent-hover: #4338ca;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --panel-bg: #f9fafb;
+  --white: #ffffff;
+  --jd-bg: #0f172a;
+  --jd-text: #e2e8f0;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--panel-bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Header ─── */
+#header {
+  background: var(--brand);
+  color: white;
+  padding: 0 20px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  z-index: 10;
+}
+#header h1 { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+#header .subtitle { font-size: 11px; color: #94a3b8; margin-left: 8px; }
+#header-right { display: flex; align-items: center; gap: 10px; }
+#status-badge {
+  font-size: 11px; padding: 3px 10px; border-radius: 20px;
+  background: #1e3a5f; color: #93c5fd;
+}
+#status-badge.ready { background: #064e3b; color: #6ee7b7; }
+#status-badge.loading { background: #78350f; color: #fbbf24; }
+#status-badge.error { background: #7f1d1d; color: #fca5a5; }
+.btn-icon {
+  background: none; border: 1px solid #334155; color: #94a3b8;
+  padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 13px;
+}
+.btn-icon:hover { background: #1e293b; color: white; }
+
+/* ─── Main layout ─── */
+#app {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* ─── Panels ─── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+#jd-panel { width: 34%; background: var(--jd-bg); color: var(--jd-text); border-right: none; }
+#resume-panel { width: 38%; background: var(--white); }
+#cl-panel { width: 28%; background: var(--white); border-right: none; }
+
+.panel-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+#jd-panel .panel-header { border-bottom-color: #1e293b; }
+#resume-panel .panel-header, #cl-panel .panel-header { border-bottom-color: var(--border); }
+
+.panel-title { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; opacity: 0.7; }
+#jd-panel .panel-title { color: #94a3b8; }
+
+.panel-body { flex: 1; overflow-y: auto; padding: 16px; }
+.panel-footer { padding: 12px 16px; border-top: 1px solid; flex-shrink: 0; }
+#jd-panel .panel-footer { border-top-color: #1e293b; }
+#resume-panel .panel-footer, #cl-panel .panel-footer { border-top-color: var(--border); }
+
+/* ─── JD Panel ─── */
+#jd-textarea {
+  width: 100%; height: 180px;
+  background: #1e293b; color: var(--jd-text);
+  border: 1px solid #334155; border-radius: var(--radius);
+  padding: 12px; font-size: 13px; line-height: 1.6;
+  resize: vertical; font-family: inherit;
+}
+#jd-textarea:focus { outline: none; border-color: var(--accent); }
+#jd-textarea::placeholder { color: #475569; }
+
+.extract-row { display: flex; gap: 8px; margin-top: 10px; }
+.btn-extract {
+  flex: 1; padding: 9px; background: var(--accent); color: white;
+  border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500;
+}
+.btn-extract:hover { background: var(--accent-hover); }
+.btn-extract:disabled { opacity: 0.5; cursor: not-allowed; }
+
+#extraction-results { margin-top: 14px; }
+.ext-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin-bottom: 8px; font-size: 12px;
+}
+.ext-label { color: #64748b; width: 100px; flex-shrink: 0; padding-top: 2px; }
+.ext-value { color: #e2e8f0; font-weight: 500; }
+
+.keyword-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.chip {
+  font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 500;
+}
+.chip-must { background: #7f1d1d; color: #fca5a5; }
+.chip-tool { background: #1e3a5f; color: #93c5fd; }
+.chip-soft { background: #1e293b; color: #94a3b8; }
+.chip-matched { border: 1px solid #059669; color: #6ee7b7 !important; background: transparent !important; }
+
+#match-score-bar { margin-top: 14px; }
+.score-label { font-size: 11px; color: #64748b; margin-bottom: 4px; }
+.score-track { height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; }
+.score-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s; }
+.score-text { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+
+.section-divider { height: 1px; background: #1e293b; margin: 14px 0; }
+
+/* ─── Generate button ─── */
+#btn-generate {
+  width: 100%; padding: 11px; border: none; border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  color: white; font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+#btn-generate:hover { opacity: 0.92; }
+#btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── Resume Panel ─── */
+#resume-editor {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #111;
+}
+#resume-editor .empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--text-muted); font-family: -apple-system, sans-serif;
+}
+#resume-editor .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+#resume-editor .empty-state p { font-size: 14px; }
+
+.r-name { font-size: 22px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.5px; }
+.r-contact { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.r-divider { border: none; border-top: 2px solid var(--accent); margin: 10px 0; }
+.r-section-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px; margin-top: 14px;
+}
+.r-job { margin-bottom: 12px; }
+.r-job-header { display: flex; justify-content: space-between; align-items: baseline; }
+.r-job-title { font-weight: 700; font-size: 13.5px; }
+.r-job-dates { font-size: 12px; color: var(--text-muted); }
+.r-job-company { font-size: 12.5px; color: var(--text-muted); margin-bottom: 4px; }
+.r-bullets { padding-left: 16px; margin-top: 4px; }
+.r-bullets li { margin-bottom: 3px; font-size: 13px; }
+
+[contenteditable]:hover { background: #f0f4ff; border-radius: 3px; }
+[contenteditable]:focus { outline: 2px solid var(--accent); outline-offset: 2px; background: #f0f4ff; border-radius: 3px; }
+.editable-hint { font-size: 10px; color: var(--accent); opacity: 0; transition: opacity 0.2s; }
+[contenteditable]:hover + .editable-hint { opacity: 1; }
+
+/* ─── Cover Letter Panel ─── */
+#cl-editor {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 13.5px; line-height: 1.65;
+}
+.cl-para { margin-bottom: 14px; }
+.cl-para-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 3px; font-family: -apple-system, sans-serif; }
+
+/* ─── Buttons ─── */
+.btn { padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { background: var(--panel-bg); }
+.btn-print { background: #111827; color: white; }
+.btn-print:hover { background: #374151; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-row { display: flex; gap: 8px; }
+
+/* ─── Modals ─── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: white; border-radius: 12px; padding: 28px;
+  width: 480px; max-width: 96vw; box-shadow: var(--shadow-lg);
+  transform: translateY(-10px); transition: transform 0.2s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal h2 { font-size: 18px; margin-bottom: 6px; }
+.modal p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+.field input {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius); font-size: 14px;
+}
+.field input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.field input.highlight { border-color: var(--accent); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.modal-close { position: absolute; right: 16px; top: 16px; background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); }
+
+/* ─── Loading spinner ─── */
+.spinner {
+  width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Scrollbars ─── */
+.panel-body::-webkit-scrollbar { width: 5px; }
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+.panel-body::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+#resume-panel .panel-body::-webkit-scrollbar-thumb,
+#cl-panel .panel-body::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ─── Tooltip ─── */
+.tooltip { position: relative; }
+.tooltip-text {
+  position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+  background: #111; color: white; font-size: 11px; padding: 4px 8px;
+  border-radius: 4px; white-space: nowrap; pointer-events: none; opacity: 0;
+  transition: opacity 0.15s;
+}
+.tooltip:hover .tooltip-text { opacity: 1; }
+
+/* ─── Print styles ─── */
+@media print {
+  body { overflow: visible; height: auto; }
+  #header, #jd-panel, #cl-panel, #resume-panel .panel-header,
+  #resume-panel .panel-footer, .no-print { display: none !important; }
+  #app { display: block; }
+  #resume-panel {
+    width: 100%; border: none;
+    display: block; overflow: visible; height: auto;
+  }
+  #resume-panel .panel-body { overflow: visible; padding: 0; }
+  #resume-editor [contenteditable]:hover,
+  #resume-editor [contenteditable]:focus { background: none !important; outline: none !important; }
+  .r-divider { border-top-color: #000; }
+  .r-section-title { color: #000; }
+  #cover-letter-print { display: block !important; }
+  #resume-content-print { display: block !important; }
+}
+
+/* Print-only areas */
+#cover-letter-print { display: none; }
+.print-cl {
+  font-family: 'Georgia', serif; font-size: 13px; line-height: 1.65;
+  max-width: 700px; padding: 40px;
+}
+.print-cl-date { margin-bottom: 24px; color: #555; }
+.print-cl-para { margin-bottom: 14px; }
+</style>
+</head>
+<body>
+
+<!-- ─── Header ─── -->
+<div id="header">
+  <div style="display:flex;align-items:center;gap:6px">
+    <div style="width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px">✦</div>
+    <h1>Tailoring Studio</h1>
+    <span class="subtitle">shakil.fun/apply</span>
+  </div>
+  <div id="header-right">
+    <span id="status-badge">Paste JD to start</span>
+    <button class="btn-icon tooltip" onclick="showSettings()">
+      ⚙ Settings
+      <span class="tooltip-text">API key & preferences</span>
+    </button>
+  </div>
+</div>
+
+<!-- ─── App ─── -->
+<div id="app">
+
+  <!-- ─── JD Panel ─── -->
+  <div class="panel" id="jd-panel">
+    <div class="panel-header">
+      <span class="panel-title">Job Description</span>
+      <button class="btn-icon" style="border-color:#334155;font-size:11px" onclick="clearJD()">Clear</button>
+    </div>
+    <div class="panel-body">
+      <textarea id="jd-textarea" placeholder="Paste the full job description here...&#10;&#10;The app will extract: company, role, hiring manager, keywords, and requirements — then tailor your resume in seconds."></textarea>
+      <div class="extract-row">
+        <button class="btn-extract" id="btn-extract" onclick="extractAndGenerate()">
+          <span id="extract-label">✦ Analyze & Generate Resume</span>
+        </button>
+      </div>
+
+      <div id="extraction-results" style="display:none">
+        <div class="section-divider"></div>
+        <div class="ext-row">
+          <span class="ext-label">Company</span>
+          <span class="ext-value" id="ext-company">—</span>
+        </div>
+        <div class="ext-row">
+          <span class="ext-label">Role</span>
+          <span class="ext-value" id="ext-role">—</span>
+        </div>
+        <div class="ext-row">
+          <span class="ext-label">Hiring Manager</span>
+          <span class="ext-value" id="ext-hm">—</span>
+        </div>
+        <div class="ext-row" id="ext-must-row" style="display:none">
+          <span class="ext-label">Must-Have</span>
+          <div class="ext-value">
+            <div class="keyword-chips" id="ext-must-chips"></div>
+          </div>
+        </div>
+        <div class="ext-row" id="ext-tools-row" style="display:none">
+          <span class="ext-label">Tools</span>
+          <div class="ext-value">
+            <div class="keyword-chips" id="ext-tools-chips"></div>
+          </div>
+        </div>
+        <div id="match-score-bar">
+          <div class="score-label">Keyword match</div>
+          <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+          <div class="score-text" id="score-text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer" style="background:#0f172a">
+      <button id="btn-generate" onclick="extractAndGenerate()" style="display:none">
+        <div class="spinner" id="gen-spinner" style="display:none"></div>
+        <span id="gen-label">↻ Re-generate</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── Resume Panel ─── -->
+  <div class="panel" id="resume-panel">
+    <div class="panel-header">
+      <span class="panel-title">Resume</span>
+      <div class="btn-row no-print">
+        <button class="btn btn-outline btn-sm" onclick="copyResumeText()" title="Copy as plain text">Copy Text</button>
+        <button class="btn btn-print btn-sm" onclick="printResume()">🖨 Print Resume</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div id="resume-editor">
+        <div class="empty-state">
+          <div class="icon">📄</div>
+          <p>Your tailored resume will appear here.</p>
+          <p style="margin-top:8px;font-size:12px">Paste a job description and click Generate.</p>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer no-print" id="resume-footer" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--text-muted)">Click any text to edit inline</span>
+        <button class="btn btn-print btn-sm" onclick="printResume()">🖨 Print Resume PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Cover Letter Panel ─── -->
+  <div class="panel" id="cl-panel">
+    <div class="panel-header">
+      <span class="panel-title">Cover Letter</span>
+      <div class="btn-row no-print">
+        <button class="btn btn-print btn-sm" onclick="printCoverLetter()">🖨 Print CL</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div id="cl-editor">
+        <div class="empty-state">
+          <div class="icon">✉️</div>
+          <p>Your cover letter will appear here.</p>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer no-print" id="cl-footer" style="display:none">
+      <button class="btn btn-print" style="width:100%" onclick="printCoverLetter()">🖨 Print Cover Letter PDF</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- ─── Print Preflight Modal ─── -->
+<div class="modal-overlay" id="preflight-modal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('preflight-modal')">✕</button>
+    <h2 id="preflight-title">Print Preflight</h2>
+    <p id="preflight-subtitle">Review details before printing. Auto-filled from the job description.</p>
+    <div class="field">
+      <label>Company Name</label>
+      <input type="text" id="pf-company" class="highlight">
+    </div>
+    <div class="field">
+      <label>Role / Position Title</label>
+      <input type="text" id="pf-role" class="highlight">
+    </div>
+    <div class="field">
+      <label>Hiring Manager Name (for cover letter greeting)</label>
+      <input type="text" id="pf-hm" placeholder="e.g. Alex Johnson — leave blank for 'Hiring Team'">
+    </div>
+    <div class="field">
+      <label>Application Date</label>
+      <input type="date" id="pf-date">
+    </div>
+    <div class="field">
+      <label>Job Reference # (optional)</label>
+      <input type="text" id="pf-ref" placeholder="e.g. REQ-12345">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('preflight-modal')">Cancel</button>
+      <button class="btn btn-print" onclick="applyPreflightAndPrint()">🖨 Print Resume</button>
+      <button class="btn btn-primary" onclick="applyPreflightAndPrintCL()">🖨 Print Cover Letter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Settings Modal ─── -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('settings-modal')">✕</button>
+    <h2>Settings</h2>
+    <p>Configure a proxy URL (recommended) or paste your API key directly.</p>
+    <div class="field">
+      <label>Proxy URL <span style="font-size:11px;color:var(--success);font-weight:600">★ Use this — avoids org CORS restrictions</span></label>
+      <input type="text" id="proxy-url-input" placeholder="https://your-worker.workers.dev  or  https://n8n.shakil.fun/webhook/claude-proxy" class="highlight">
+    </div>
+    <div class="field">
+      <label>Anthropic API Key <span style="font-size:11px;color:var(--text-muted)">(fallback — direct call, may be blocked by org)</span></label>
+      <input type="password" id="api-key-input" placeholder="sk-ant-...">
+    </div>
+    <div class="field">
+      <label>ClickUp API Token (optional — for logging applications)</label>
+      <input type="text" id="clickup-token-input" placeholder="pk_...">
+    </div>
+    <div class="field">
+      <label>ClickUp List ID (for job applications)</label>
+      <input type="text" id="clickup-list-input" placeholder="e.g. 901234567890">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('settings-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Cover Letter Print Area (hidden, print-only) ─── -->
+<div id="cover-letter-print" class="print-cl">
+  <div class="print-cl-date" id="cl-print-date"></div>
+  <div id="cl-print-company-block" style="margin-bottom:24px;color:#333;font-size:13px;line-height:1.5"></div>
+  <div id="cl-print-greeting" style="margin-bottom:14px"></div>
+  <div id="cl-print-body"></div>
+  <div id="cl-print-closing" style="margin-top:24px"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// EMBEDDED CAREER DATA
+// ═══════════════════════════════════════════════════════
+const CAREER_DATA = `
+CAREER SUMMARY: Shakil Ahmad, CFA charterholder, Fulbright Scholar (M.A. International Trade, Middlebury Institute). Senior Financial Analyst at DreamHost since July 2024. 10+ years experience across hosting/SaaS, NBFI, and manufacturing.
+
+CONTACT: workwithshakil@gmail.com | +1 (949) 690-7743 | Aliso Viejo, CA | linkedin.com/in/shakil-fulbrighter
+
+CREDENTIALS: CFA Charter (2019), Fulbright Scholarship (2019-20), Google BI Certificate (2023), Google Data Analytics Certificate (2022), PRINCE2 (2016)
+
+EDUCATION:
+- M.A. International Trade, Middlebury Institute (Fulbright, 2019-2020)
+- M.Sc Economics, East West University, Dhaka (2017-2018)
+- MBA Finance, IBA University of Dhaka - most selective business school in Bangladesh (2014-2017)
+- BBA Finance, University of Dhaka (2009-2012)
+
+CURRENT ROLE - DreamHost, Senior Financial Analyst (July 2024 - Present, Remote):
+Revenue modeling, cost-benefit analysis, forecasting, BI, and financial automation across full DreamHost product portfolio (Shared Hosting, Domains, DreamPress, VPS, Dedicated, Pro Services, AI website builder Remixer).
+
+KEY ACHIEVEMENTS & PROJECTS:
+- Built scenario analysis model for Remixer (AI website builder) launch + Europe expansion — quantified acquisition and retention impact
+- Built and overhauled multi-TLD Domain Revenue Model: deferred revenue waterfall + cohort-based renewal forecasting + ARPU/churn + new registration/transfer modeling. Spans Excel, Grafana, ClickHouse, Python; reconciles with accounting deferred revenue
+- Rebuilt Shared Hosting revenue + retention model with cohort-specific renewal data; GAAP-compliant 3-year forecasting
+- Built financial model for Shared Unlimited price-increase impact using two-dimensional scenario framework (Excel Data Tables) — balanced renewal-rate deterioration vs incremental revenue
+- Implemented monthly ensemble forecasting using SARIMA, Holt-Winters, Prophet, LSTM for customer adds/churn across all products
+- Maintained P&L Trending model and Rolling Revenue model — monthly variance checks, 2028 forecast horizon
+- Led 2026 revenue budget consolidation integrating all product-level forecasts into standardized revenue template
+- Designed Consolidated Budget Model in Power BI: Power Query integrations from 30+ Google Sheets templates, real-time central budget, GL/calendar/department lookup tables, full drill-through
+- Built integrated Budget vs Actual (BvA) layer in Power BI used by Accounting and Finance daily
+- Designed cohort-based SQL panels in Grafana via CTEs and conditional joins; parameterization reduced manual query edits 85%
+- Implemented recursive SQL to automate 3-5 years of monthly data extraction: 2.5 hours → 10 minutes
+- Wrote Python program for data integrity (identifying missing domains in finance data)
+- Conducted internal Power BI workshop for departmental BI capability
+- Partnered with CMO, VP Finance, Pro Services, Marketing, Product, Engineering, Data on cross-functional projects
+- Performance: rated "Achieved my Goal" every quarter since Q1 2025
+
+PREVIOUS ROLE - United Finance Limited, Senior Financial Analyst (Jan 2021 - Aug 2023, Dhaka):
+Led multi-departmental teams (BI, Risk, Research, Advisory, Analytics). Developed automatic credit risk assessment models. Created interactive budget dashboards and deposit cost models. Conducted quarterly peer review analysis presented to Board of Directors.
+
+United Finance Limited, Financial Analyst (Nov 2016 - Dec 2020):
+Budget analysis, trend forecasting, portfolio analysis. Prepared MD&A section of annual reports. Collaborated with CEO on strategic planning. Implemented department-wise KPIs.
+
+United Finance Limited, Product Manager - Factoring (Feb 2015 - Oct 2016):
+Grew factoring loan portfolio 45% from USD 13.75M to USD 20M in 18 months. Designed pipeline-management database in MS Access. Designed incentive packages for relationship managers.
+
+Sunman Group (Manufacturing), Financial Analyst (Feb 2013 - Feb 2015):
+Cost-center tracking and optimization, BvA reports, presented to Board.
+
+TECHNICAL SKILLS:
+Power BI (Advanced: DAX, Power Query, data modeling, drill-through), SQL (Advanced: recursive CTEs, conditional joins, window functions — ClickHouse, PostgreSQL, MySQL, MSSQL), Excel (Expert: Data Tables, OFFSET, scenario analysis, financial modeling), Python (intermediate: data manipulation, integrity scripts), Grafana, ClickHouse, Google Sheets (Advanced), Tableau, R, Stata, SPSS, SAP S/4HANA, Cognos, Visio, MS Access
+
+STATISTICAL/FORECASTING: SARIMA, Holt-Winters, Prophet, LSTM, ensemble methods, sensitivity/scenario analysis, cohort analysis, variance analysis, hypothesis testing
+
+FINANCE SKILLS: Financial Modeling, Revenue Modeling (multi-product, GAAP, 3-year), Cost-Benefit Analysis, Pricing Analysis, FP&A, Strategic Finance, Variance Analysis (BvA, P&L), Retention Modeling, ARPU/MRR/ARR, Churn Analysis, Capital Planning, Credit Risk Modeling, Portfolio Management, GAAP Reporting, Manufacturing Finance
+
+LANGUAGES: Bengali (Native), English (Fluent), Hindi (Beginner)
+
+SIDE PROJECTS: Between Lines and Lands podcast (35+ episodes, 285+ YouTube subscribers, macro/development economics), starsandrights.com (test-prep webapp for US Citizenship, DMV)
+
+MANAGER TESTIMONIALS:
+"You are doing well in applying the BI and analytical skills you have brought to this position in ways that meet DreamHost's needs." — Ho Yun, VP of Finance
+"The Domains modeling, Pro Services activity tracking, and Grafana queries really show what you are capable of. I appreciate your ability to think through problems, including what data will be required, how to query that data, and how to build models around the data." — Ho Yun, VP of Finance
+`;
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const state = {
+  apiKey: '',
+  proxyUrl: '',
+  extracted: null,
+  resume: null,
+  coverLetter: null,
+  isGenerating: false,
+  printTarget: 'resume'
+};
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  const key = localStorage.getItem('shakil_api_key') || '';
+  const proxy = localStorage.getItem('shakil_proxy_url') || '';
+  state.apiKey = key;
+  state.proxyUrl = proxy;
+  if (key) document.getElementById('api-key-input').value = key;
+  if (proxy) document.getElementById('proxy-url-input').value = proxy;
+
+  const cu = localStorage.getItem('shakil_clickup_token');
+  if (cu) document.getElementById('clickup-token-input').value = cu;
+  const cl = localStorage.getItem('shakil_clickup_list');
+  if (cl) document.getElementById('clickup-list-input').value = cl;
+
+  if (!key && !proxy) {
+    setStatus('Configure proxy in Settings', 'error');
+    setTimeout(() => showSettings(), 400);
+  } else {
+    setStatus('Ready', 'ready');
+  }
+
+  document.getElementById('pf-date').value = new Date().toISOString().split('T')[0];
+});
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════
+function showSettings() {
+  document.getElementById('settings-modal').classList.add('open');
+}
+function saveSettings() {
+  const key = document.getElementById('api-key-input').value.trim();
+  const proxy = document.getElementById('proxy-url-input').value.trim();
+  const cu = document.getElementById('clickup-token-input').value.trim();
+  const cl = document.getElementById('clickup-list-input').value.trim();
+  if (proxy) { localStorage.setItem('shakil_proxy_url', proxy); state.proxyUrl = proxy; }
+  if (key) { localStorage.setItem('shakil_api_key', key); state.apiKey = key; }
+  if (cu) localStorage.setItem('shakil_clickup_token', cu);
+  if (cl) localStorage.setItem('shakil_clickup_list', cl);
+  closeModal('settings-modal');
+  setStatus('Ready', 'ready');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════
+// STATUS
+// ═══════════════════════════════════════════════════════
+function setStatus(text, type = '') {
+  const el = document.getElementById('status-badge');
+  el.textContent = text;
+  el.className = type ? `ready ${type}` : '';
+  if (type === 'ready') el.className = 'ready';
+  if (type === 'error') el.className = 'error';
+  if (type === 'loading') el.className = 'loading';
+}
+
+// ═══════════════════════════════════════════════════════
+// MAIN GENERATE FUNCTION
+// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// CLAUDE API CALL (proxy-aware)
+// ═══════════════════════════════════════════════════════
+async function callClaude(payload) {
+  // Prefer proxy URL — avoids CORS / org restriction issues
+  if (state.proxyUrl) {
+    return fetch(state.proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
+  // Fallback: direct API call (works only if org allows it)
+  if (state.apiKey) {
+    return fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': state.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify(payload)
+    });
+  }
+  throw new Error('No proxy URL or API key configured. Open Settings.');
+}
+
+async function extractAndGenerate() {
+  if (!state.proxyUrl && !state.apiKey) {
+    showSettings();
+    return;
+  }
+  const jd = document.getElementById('jd-textarea').value.trim();
+  if (!jd) {
+    alert('Please paste a job description first.');
+    return;
+  }
+  if (state.isGenerating) return;
+
+  state.isGenerating = true;
+  setStatus('Generating…', 'loading');
+  document.getElementById('btn-extract').disabled = true;
+  document.getElementById('extract-label').innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px"></span>Analyzing…';
+  document.getElementById('btn-generate').disabled = true;
+  document.getElementById('gen-spinner').style.display = 'block';
+  document.getElementById('gen-label').textContent = 'Generating…';
+
+  const prompt = buildPrompt(jd);
+
+  try {
+    const response = await callClaude({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API error ${response.status}`);
+    }
+
+    const data = await response.json();
+    const text = data.content[0].text;
+
+    // Extract JSON from response
+    const jsonMatch = text.match(/```json\n?([\s\S]*?)\n?```/) || text.match(/(\{[\s\S]*\})/);
+    if (!jsonMatch) throw new Error('Could not parse JSON response from Claude');
+    const parsed = JSON.parse(jsonMatch[1]);
+
+    state.extracted = parsed.extracted;
+    state.resume = parsed.resume;
+    state.coverLetter = parsed.cover_letter;
+
+    renderExtraction();
+    renderResume();
+    renderCoverLetter();
+
+    setStatus('Ready', 'ready');
+    document.getElementById('extraction-results').style.display = 'block';
+    document.getElementById('btn-generate').style.display = 'flex';
+    document.getElementById('resume-footer').style.display = 'block';
+    document.getElementById('cl-footer').style.display = 'block';
+
+  } catch (err) {
+    console.error(err);
+    setStatus('Error — check console', 'error');
+    alert('Error: ' + err.message + '\n\nCheck Settings → ensure your API key is correct.');
+  } finally {
+    state.isGenerating = false;
+    document.getElementById('btn-extract').disabled = false;
+    document.getElementById('extract-label').textContent = '✦ Analyze & Generate Resume';
+    document.getElementById('btn-generate').disabled = false;
+    document.getElementById('gen-spinner').style.display = 'none';
+    document.getElementById('gen-label').textContent = '↻ Re-generate';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// PROMPT BUILDER
+// ═══════════════════════════════════════════════════════
+function buildPrompt(jd) {
+  return `You are an elite HR executive and resume writer at a top tech company (Ramp, Anduril, SpaceX, Google, Nvidia). You are reviewing candidates for a Senior Financial Analyst or Finance Manager role and want to generate the best possible resume that would earn an interview.
+
+Analyze the job description and Shakil Ahmad's career document. Generate a tailored resume AND cover letter.
+
+RETURN ONLY VALID JSON — no markdown, no explanation, just the JSON object.
+
+Job Description:
+${jd}
+
+Career Source Document:
+${CAREER_DATA}
+
+Return this exact JSON structure:
+{
+  "extracted": {
+    "company": "company name",
+    "role": "exact role title from JD",
+    "hiring_manager": "name if mentioned, or null",
+    "must_have": ["up to 6 must-have requirements"],
+    "tools": ["technical tools mentioned"],
+    "soft_skills": ["soft skills mentioned"]
+  },
+  "resume": {
+    "summary": "3-sentence professional summary tailored to this JD, uses JD vocabulary, references CFA and Fulbright if space allows",
+    "experience": [
+      {
+        "company": "DreamHost",
+        "title": "Senior Financial Analyst",
+        "dates": "July 2024 – Present",
+        "location": "Remote (Aliso Viejo, CA)",
+        "type": "present",
+        "bullets": ["5-6 bullets starting with strong verbs, quantified where possible, ordered by JD relevance"]
+      },
+      {
+        "company": "Upwork",
+        "title": "Financial Analyst / Consultant",
+        "dates": "September 2023 – Present",
+        "location": "Remote",
+        "type": "past",
+        "bullets": ["1-2 bullets only if relevant, otherwise omit this role entirely by leaving bullets empty"]
+      },
+      {
+        "company": "United Finance Limited",
+        "title": "Senior Financial Analyst",
+        "dates": "January 2021 – August 2023",
+        "location": "Dhaka, Bangladesh",
+        "type": "past",
+        "bullets": ["2-4 relevant bullets"]
+      },
+      {
+        "company": "United Finance Limited",
+        "title": "Financial Analyst",
+        "dates": "November 2016 – December 2020",
+        "location": "Dhaka, Bangladesh",
+        "type": "past",
+        "bullets": ["2-3 relevant bullets or fewer"]
+      },
+      {
+        "company": "Sunman Group of Companies",
+        "title": "Financial Analyst",
+        "dates": "February 2013 – February 2015",
+        "location": "Dhaka, Bangladesh",
+        "type": "past",
+        "bullets": ["1-2 bullets only if manufacturing/cost finance is relevant to JD"]
+      }
+    ],
+    "education": [
+      {"degree": "M.A. International Trade", "school": "Middlebury Institute of International Studies", "year": "2020", "note": "Fulbright Scholar"},
+      {"degree": "MBA — Finance", "school": "IBA, University of Dhaka", "year": "2017", "note": ""},
+      {"degree": "B.B.A. — Finance", "school": "University of Dhaka", "year": "2012", "note": ""}
+    ],
+    "certifications": ["CFA Charter — CFA Institute, 2019", "Fulbright Scholarship — U.S. Department of State, 2019", "Google Business Intelligence Certificate — 2023"],
+    "skills": "one compact line of skills most relevant to this JD, lead with top 3"
+  },
+  "cover_letter": {
+    "greeting": "Dear [Hiring Manager name or 'Hiring Team'],",
+    "para1": "opening paragraph — specific hook about this company and role, 2-3 sentences, no generic openers",
+    "para2": "2-3 specific accomplishments that directly map to the JD requirements, with numbers",
+    "para3": "closing — forward-looking, why this role now, confident and specific",
+    "closing": "Sincerely,\\nShakil Ahmad, CFA"
+  }
+}
+
+Rules:
+- Never fabricate. Use only facts from the career document.
+- CFA usage: always "CFA charterholder" — never "I am a CFA"
+- Never claim Shakil set pricing — he modeled pricing impact
+- Every bullet starts with a strong verb
+- At least 50% of bullets contain numbers/metrics
+- Include Upwork role only if relevant to JD; otherwise remove it from experience array
+- Skills line should mirror JD vocabulary
+- Cover letter greeting: use hiring manager name if extracted, otherwise "Hiring Team"
+- No corporate-speak (leverage, synergize, thrilled to announce)`;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER EXTRACTION
+// ═══════════════════════════════════════════════════════
+function renderExtraction() {
+  const e = state.extracted;
+  if (!e) return;
+
+  document.getElementById('ext-company').textContent = e.company || '—';
+  document.getElementById('ext-role').textContent = e.role || '—';
+  document.getElementById('ext-hm').textContent = e.hiring_manager || 'Not mentioned';
+
+  // Prefill preflight
+  document.getElementById('pf-company').value = e.company || '';
+  document.getElementById('pf-role').value = e.role || '';
+  document.getElementById('pf-hm').value = e.hiring_manager || '';
+
+  // Keyword chips
+  if (e.must_have && e.must_have.length) {
+    document.getElementById('ext-must-row').style.display = 'flex';
+    const el = document.getElementById('ext-must-chips');
+    el.innerHTML = e.must_have.map(k => `<span class="chip chip-must">${k}</span>`).join('');
+  }
+  if (e.tools && e.tools.length) {
+    document.getElementById('ext-tools-row').style.display = 'flex';
+    const el = document.getElementById('ext-tools-chips');
+    el.innerHTML = e.tools.map(k => `<span class="chip chip-tool">${k}</span>`).join('');
+  }
+
+  // Match score
+  const allKeywords = [...(e.must_have||[]), ...(e.tools||[]), ...(e.soft_skills||[])];
+  const matched = allKeywords.filter(k => CAREER_DATA.toLowerCase().includes(k.toLowerCase()));
+  const score = allKeywords.length ? Math.round((matched.length / allKeywords.length) * 100) : 0;
+  document.getElementById('score-fill').style.width = score + '%';
+  document.getElementById('score-text').textContent = `${matched.length}/${allKeywords.length} keywords matched (${score}%)`;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER RESUME
+// ═══════════════════════════════════════════════════════
+function renderResume() {
+  const r = state.resume;
+  if (!r) return;
+
+  let html = `
+    <div>
+      <div class="r-name" contenteditable="true">Shakil Ahmad, CFA</div>
+      <div class="r-contact" contenteditable="true">workwithshakil@gmail.com &nbsp;·&nbsp; +1 (949) 690-7743 &nbsp;·&nbsp; Aliso Viejo, CA &nbsp;·&nbsp; linkedin.com/in/shakil-fulbrighter</div>
+    </div>
+    <hr class="r-divider">
+
+    <div class="r-section-title">Professional Summary</div>
+    <div contenteditable="true" style="font-size:13px;line-height:1.6">${e(r.summary)}</div>
+
+    <div class="r-section-title">Experience</div>`;
+
+  (r.experience || []).forEach(job => {
+    if (!job.bullets || job.bullets.length === 0) return; // skip empty roles
+    html += `
+    <div class="r-job">
+      <div class="r-job-header">
+        <div class="r-job-title" contenteditable="true">${e(job.title)}</div>
+        <div class="r-job-dates" contenteditable="true">${e(job.dates)}</div>
+      </div>
+      <div class="r-job-company" contenteditable="true">${e(job.company)} &nbsp;|&nbsp; ${e(job.location)}</div>
+      <ul class="r-bullets">
+        ${job.bullets.map(b => `<li contenteditable="true">${e(b)}</li>`).join('')}
+      </ul>
+    </div>`;
+  });
+
+  if (r.education && r.education.length) {
+    html += `<div class="r-section-title">Education</div>`;
+    r.education.forEach(ed => {
+      html += `<div style="margin-bottom:5px">
+        <span class="r-job-title" contenteditable="true">${e(ed.degree)}</span>
+        <span style="color:var(--text-muted);font-size:12px"> — </span>
+        <span style="font-size:13px" contenteditable="true">${e(ed.school)}, ${e(ed.year)}</span>
+        ${ed.note ? `<span style="font-size:12px;color:var(--accent)"> (${e(ed.note)})</span>` : ''}
+      </div>`;
+    });
+  }
+
+  if (r.certifications && r.certifications.length) {
+    html += `<div class="r-section-title">Certifications</div>
+    <div contenteditable="true" style="font-size:13px">${r.certifications.join(' &nbsp;·&nbsp; ')}</div>`;
+  }
+
+  if (r.skills) {
+    html += `<div class="r-section-title">Skills</div>
+    <div contenteditable="true" style="font-size:13px;line-height:1.6">${e(r.skills)}</div>`;
+  }
+
+  document.getElementById('resume-editor').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER COVER LETTER
+// ═══════════════════════════════════════════════════════
+function renderCoverLetter() {
+  const cl = state.coverLetter;
+  if (!cl) return;
+
+  const html = `
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px;font-family:sans-serif">${new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'})}</div>
+    <div class="cl-para">
+      <div class="cl-para-label no-print">Greeting</div>
+      <div contenteditable="true">${e(cl.greeting)}</div>
+    </div>
+    <div class="cl-para">
+      <div class="cl-para-label no-print">Opening — Hook</div>
+      <div contenteditable="true">${e(cl.para1)}</div>
+    </div>
+    <div class="cl-para">
+      <div class="cl-para-label no-print">Accomplishments</div>
+      <div contenteditable="true">${e(cl.para2)}</div>
+    </div>
+    <div class="cl-para">
+      <div class="cl-para-label no-print">Closing</div>
+      <div contenteditable="true">${e(cl.para3)}</div>
+    </div>
+    <div style="margin-top:24px">
+      <div contenteditable="true" style="white-space:pre-line">${e(cl.closing)}</div>
+    </div>`;
+
+  document.getElementById('cl-editor').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// PRINT
+// ═══════════════════════════════════════════════════════
+function printResume() {
+  state.printTarget = 'resume';
+  // Cover letter hidden during resume print via CSS
+  document.getElementById('cover-letter-print').style.display = 'none';
+  document.getElementById('cl-panel').style.display = 'none';
+  window.print();
+  document.getElementById('cl-panel').style.display = '';
+}
+
+function printCoverLetter() {
+  state.printTarget = 'cl';
+  // Build print-only cover letter area
+  buildPrintCL();
+  // Hide resume panel
+  document.getElementById('resume-panel').style.display = 'none';
+  document.getElementById('jd-panel').style.display = 'none';
+  document.getElementById('cover-letter-print').style.display = 'block';
+  // Temporarily show ONLY print CL
+  const resumeEditor = document.getElementById('resume-editor');
+  const savedDisplay = resumeEditor.style.display;
+  resumeEditor.style.display = 'none';
+  window.print();
+  resumeEditor.style.display = savedDisplay;
+  document.getElementById('resume-panel').style.display = '';
+  document.getElementById('jd-panel').style.display = '';
+  document.getElementById('cover-letter-print').style.display = 'none';
+}
+
+function buildPrintCL() {
+  const ex = state.extracted || {};
+  const date = document.getElementById('pf-date').value || new Date().toISOString().split('T')[0];
+  const hm = document.getElementById('pf-hm').value || ex.hiring_manager || '';
+  const company = document.getElementById('pf-company').value || ex.company || '';
+  const role = document.getElementById('pf-role').value || ex.role || '';
+
+  const formattedDate = new Date(date + 'T12:00:00').toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+
+  document.getElementById('cl-print-date').textContent = formattedDate;
+
+  let compBlock = '';
+  if (hm) compBlock += `${hm}<br>`;
+  if (company) compBlock += `${company}<br>`;
+  if (role) compBlock += `Re: ${role}`;
+  document.getElementById('cl-print-company-block').innerHTML = compBlock;
+
+  // Get current cover letter content from editor
+  const clEditor = document.getElementById('cl-editor');
+  const paras = clEditor.querySelectorAll('.cl-para [contenteditable]');
+  const clBody = document.getElementById('cl-print-body');
+
+  let bodyHtml = '';
+  paras.forEach(p => {
+    bodyHtml += `<p class="print-cl-para">${p.innerHTML}</p>`;
+  });
+  clBody.innerHTML = bodyHtml;
+
+  const closingEl = clEditor.querySelector('[contenteditable][style*="pre-line"]');
+  if (closingEl) {
+    document.getElementById('cl-print-closing').innerHTML = closingEl.innerHTML;
+  }
+
+  // Update greeting based on preflight
+  const greetingEl = clEditor.querySelector('.cl-para [contenteditable]');
+  if (greetingEl && hm) {
+    greetingEl.textContent = `Dear ${hm},`;
+  }
+  document.getElementById('cl-print-greeting').textContent = greetingEl ? greetingEl.textContent : `Dear ${hm || 'Hiring Team'},`;
+}
+
+function applyPreflightAndPrint() {
+  closeModal('preflight-modal');
+  printResume();
+}
+function applyPreflightAndPrintCL() {
+  closeModal('preflight-modal');
+  printCoverLetter();
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════
+function e(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function clearJD() {
+  document.getElementById('jd-textarea').value = '';
+  document.getElementById('extraction-results').style.display = 'none';
+  document.getElementById('btn-generate').style.display = 'none';
+  setStatus('Ready', 'ready');
+}
+
+function copyResumeText() {
+  const editor = document.getElementById('resume-editor');
+  const text = editor.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+// Keyboard shortcut: Cmd+P → print resume
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
+    e.preventDefault();
+    if (state.resume) {
+      showPreflight('resume');
+    }
+  }
+});
+
+function showPreflight(target) {
+  state.printTarget = target;
+  document.getElementById('preflight-title').textContent = target === 'resume' ? 'Print Resume — Preflight' : 'Print Cover Letter — Preflight';
+  document.getElementById('preflight-modal').classList.add('open');
+}
+</script>
+</body>
+</html>
