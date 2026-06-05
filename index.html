@@ -261,8 +261,14 @@ body {
 .tooltip:hover .tooltip-text { opacity: 1; }
 
 /* ─── Print styles ─── */
+/* Remove browser date/time/URL headers and footers from print */
+@page {
+  size: letter;
+  margin: 0;
+}
+
 @media print {
-  body { overflow: visible; height: auto; }
+  body { overflow: visible; height: auto; background: white; }
   #header, #jd-panel, #cl-panel, #resume-panel .panel-header,
   #resume-panel .panel-footer, .no-print { display: none !important; }
   #app { display: block; }
@@ -270,13 +276,29 @@ body {
     width: 100%; border: none;
     display: block; overflow: visible; height: auto;
   }
-  #resume-panel .panel-body { overflow: visible; padding: 0; }
+  /* Content padding replaces @page margins (since margin:0 removes browser header/footer) */
+  #resume-panel .panel-body {
+    overflow: visible;
+    padding: 0.55in 0.7in 0.55in 0.7in;
+  }
+  /* Clean up interactive styles */
   #resume-editor [contenteditable]:hover,
   #resume-editor [contenteditable]:focus { background: none !important; outline: none !important; }
-  .r-divider { border-top-color: #000; }
-  .r-section-title { color: #000; }
+  #resume-editor [contenteditable] { cursor: default; }
+  /* Keep section titles in a print-safe accent (dark indigo) */
+  .r-divider { border-top-color: #3730a3; }
+  .r-section-title { color: #3730a3 !important; }
+  /* Education notes — keep as subtle italic, not a bright link color */
+  .r-edu-note { color: #4b5563 !important; }
+  /* Prevent orphaned headings — keep title with its content */
+  .r-section-title { break-after: avoid; page-break-after: avoid; }
+  /* Prevent job entries from splitting mid-bullet */
+  .r-job { break-inside: avoid; page-break-inside: avoid; }
+  /* Tighter spacing for print */
+  .r-job { margin-bottom: 9px; }
+  .r-section-title { margin-top: 11px; margin-bottom: 5px; }
+  .r-bullets li { margin-bottom: 2px; }
   #cover-letter-print { display: block !important; }
-  #resume-content-print { display: block !important; }
 }
 
 /* Print-only areas */
@@ -874,10 +896,10 @@ function renderResume() {
     </div>
     <hr class="r-divider">
 
-    <div class="r-section-title">Professional Summary</div>
+    <div class="r-section-title" contenteditable="true">Professional Summary</div>
     <div contenteditable="true" style="font-size:13px;line-height:1.6">${e(r.summary)}</div>
 
-    <div class="r-section-title">Experience</div>`;
+    <div class="r-section-title" contenteditable="true">Experience</div>`;
 
   (r.experience || []).forEach(job => {
     if (!job.bullets || job.bullets.length === 0) return; // skip empty roles
@@ -895,24 +917,24 @@ function renderResume() {
   });
 
   if (r.education && r.education.length) {
-    html += `<div class="r-section-title">Education</div>`;
+    html += `<div class="r-section-title" contenteditable="true">Education</div>`;
     r.education.forEach(ed => {
       html += `<div style="margin-bottom:5px">
         <span class="r-job-title" contenteditable="true">${e(ed.degree)}</span>
         <span style="color:var(--text-muted);font-size:12px"> — </span>
         <span style="font-size:13px" contenteditable="true">${e(ed.school)}, ${e(ed.year)}</span>
-        ${ed.note ? `<span style="font-size:12px;color:var(--accent)"> (${e(ed.note)})</span>` : ''}
+        ${ed.note ? `<span class="r-edu-note" contenteditable="true" style="font-size:12px;color:#6b7280;font-style:italic"> · ${e(ed.note)}</span>` : ''}
       </div>`;
     });
   }
 
   if (r.certifications && r.certifications.length) {
-    html += `<div class="r-section-title">Certifications</div>
+    html += `<div class="r-section-title" contenteditable="true">Certifications</div>
     <div contenteditable="true" style="font-size:13px">${r.certifications.join(' &nbsp;·&nbsp; ')}</div>`;
   }
 
   if (r.skills) {
-    html += `<div class="r-section-title">Skills</div>
+    html += `<div class="r-section-title" contenteditable="true">Skills</div>
     <div contenteditable="true" style="font-size:13px;line-height:1.6">${e(r.skills)}</div>`;
   }
 
