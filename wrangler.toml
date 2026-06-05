@@ -1,0 +1,13 @@
+name = "shakil-apply-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Your custom domain route — Worker will answer at api.shakil.fun
+# (Set this up in Cloudflare dashboard: Workers → your worker → Triggers → Custom Domains)
+# routes = [
+#   { pattern = "api.shakil.fun", custom_domain = true }
+# ]
+
+# Secrets are NOT stored here — add them via:
+#   wrangler secret put ANTHROPIC_API_KEY
+# or in Cloudflare dashboard → Worker → Settings → Variables → Secrets
