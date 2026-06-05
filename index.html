@@ -171,9 +171,9 @@ body {
 #resume-editor .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
 #resume-editor .empty-state p { font-size: 14px; }
 
-.r-name { font-size: 22px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.5px; }
-.r-contact { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.r-divider { border: none; border-top: 2px solid var(--accent); margin: 10px 0; }
+.r-name { font-size: 22px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.5px; margin-bottom: 5px; }
+.r-contact { font-size: 12px; color: var(--text-muted); margin-top: 3px; margin-bottom: 12px; }
+.r-divider { border: none; border-top: 2px solid var(--accent); margin: 4px 0 14px 0; }
 .r-section-title {
   font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
   color: var(--accent); margin-bottom: 6px; margin-top: 14px;
@@ -184,7 +184,8 @@ body {
 .r-job-dates { font-size: 12px; color: var(--text-muted); }
 .r-job-company { font-size: 12.5px; color: var(--text-muted); margin-bottom: 4px; }
 .r-bullets { padding-left: 16px; margin-top: 4px; }
-.r-bullets li { margin-bottom: 3px; font-size: 13px; }
+.r-bullets li { margin-bottom: 3px; font-size: 13px; text-align: justify; }
+.r-summary { text-align: justify; }
 
 [contenteditable]:hover { background: #f0f4ff; border-radius: 3px; }
 [contenteditable]:focus { outline: 2px solid var(--accent); outline-offset: 2px; background: #f0f4ff; border-radius: 3px; }
@@ -298,7 +299,7 @@ body {
   #resume-editor [contenteditable]:focus { background: none !important; outline: none !important; }
   #resume-editor [contenteditable] { cursor: default; }
   /* Keep section titles in a print-safe accent (dark indigo) */
-  .r-divider { border-top-color: #3730a3; margin: 7px 0 !important; }
+  .r-divider { border-top-color: #3730a3; margin: 4px 0 10px 0 !important; }
   .r-section-title { color: #3730a3 !important; }
   /* Education notes */
   .r-edu-note { color: #4b5563 !important; }
@@ -856,7 +857,8 @@ Rules:
 - Include Upwork role only if relevant to JD; otherwise remove it from experience array
 - Skills line should mirror JD vocabulary
 - Cover letter greeting: use hiring manager name if extracted, otherwise "Hiring Team"
-- No corporate-speak (leverage, synergize, thrilled to announce)`;
+- No corporate-speak (leverage, synergize, thrilled to announce)
+- Never use em dashes (—) in bullet points or summary text. Use a comma, semicolon, or restructure the sentence instead. En dashes in number ranges (2–5 years) are fine.`;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -910,7 +912,7 @@ function renderResume() {
     <hr class="r-divider">
 
     <div class="r-section-title" contenteditable="true">Professional Summary</div>
-    <div contenteditable="true" style="font-size:13px;line-height:1.6">${e(r.summary)}</div>
+    <div class="r-summary" contenteditable="true" style="font-size:13px;line-height:1.6">${e(r.summary)}</div>
 
     <div class="r-section-title" contenteditable="true">Experience</div>`;
 
