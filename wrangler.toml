@@ -2,9 +2,11 @@ name = "shakil-apply"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
+# API proxy lives at api.shakil.fun
+# The HTML app lives at apply.shakil.fun (Cloudflare Pages)
 routes = [
-  { pattern = "apply.shakil.fun", custom_domain = true }
+  { pattern = "api.shakil.fun", custom_domain = true }
 ]
 
-# Secrets are NOT stored here — set via Cloudflare dashboard or:
+# Secret: ANTHROPIC_API_KEY — set via Cloudflare dashboard or:
 #   npx wrangler secret put ANTHROPIC_API_KEY
